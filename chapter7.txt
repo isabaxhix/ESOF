@@ -1,0 +1,45 @@
+Chapter 7
+
+Project : Strong password detection
+
+import re
+
+maiusculo = re.compile(r'[A-Z]')
+minusculo = re.compile(r'[a-z]')
+digito = re.compile(r'\d')
+
+def verificar(senha):
+    if maiusculo.search(senha) and minusculo.search(senha) and digito.search(senha) and len(senha) >= 8:
+        print ("Senha forte")
+    else:
+        print ("Senha fraca")
+
+senha = "isabaxhix" #senha para ser testada
+verificar(senha)
+ 
+project : regex version of strip()
+
+import re
+
+def stripRegex(string,remover):
+    
+    if remover == '':
+        espacoAntes = re.compile(r'^\s+')
+        stringAntes = espacoAntes.sub('',string)
+        espacoDepois = re.compile(r'\s+$')
+        stringDepois = espacoDepois.sub('',string)
+        stringTotal = espacoDepois.sub('',stringAntes)
+        print(stringLeft)
+        print(stringRight)
+
+    else:
+        remAntes = re.compile(r'^(%s)+'%remover) 
+        stringAntes = remAntes.sub('',string)
+        remDepois = re.compile(r'(%s)+$'%remover)
+        stringTotal = remDepois.sub('',stringAntes)
+        print(stringTotal)
+
+string = 'isabaxhixesofm4' #string para ser modificada	
+remover = 'isabaxhix' #string para ser retirada
+
+stripRegex(string,remover)
