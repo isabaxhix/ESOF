@@ -1,0 +1,349 @@
+# 1 - Criando um banco de dados
+
+import sqlite3
+conn = sqlite3.connect('clientes.db')
+conn.close()
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+# 2 - Criando uma tabela
+
+import sqlite3
+conn = sqlite3.connect('clientes.db')
+cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE Clientes (
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	nome TEXT NOT NULL,
+	cpf VARCHAR (11) NOT NULL,
+	email TEXT NOT NULL,
+	fone TEXT,
+	cidade TEXT,
+	uf VARCHAR(2) NOT NULL,
+	criado_em DATE NOT NULL
+);
+""")
+
+print("Tabela criada com sucesso.")
+
+conn.close()
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+# 3 - Criando dados sql
+
+import sqlite3
+
+conn = sqlite3.connect ('clientes.db')
+cursor = conn.cursor()
+
+cursor.execute("""
+INSERT INTO clientes (nome, idade, cpf, email, fone, cidade, uf, criado_em)
+VALUES ('Regis', 35, '00000000000', 'regis@email.com' '11-98765-4321', 'São Paulo', 'SP', '2014-06-08')
+""")
+
+cursor.execute("""
+INSERT INTO clientes(nome, idade, cpf, email, fone, cidade, uf, criado_em)
+VALUES ('Aloisio', 87,'11111111111', 'aloisio@email.com', '98765-4322', 'Porto Alegre', 'RS', '2014-06-09')
+""")
+
+cursor.execute("""
+INSERT INTO clientes (nome, idade, cpf, email, fone, cidade, uf, criado_em)
+VALUES ('Bruna', 21, '22222222222', 'bruna@email.com', '21-98765-4323', 'Rio de Janeiro', 'RJ', '2014-06-09')
+""")
+
+cursor.execute("""
+INSERT INTO clientes (nome, idade, cpf, email, fone, cidade, uf, criado_em)
+VALUES ('Matheus', 19, '33333333333', 'matheus@email.com', '11-98765-4324', 'Campinas', 'SP', '2014-06-08')
+""")
+
+conn.commit()
+
+print ('Dados inseridos com sucesso.')
+
+conn.close()
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+# 4 - Inserindo n registros com uma tupla de dados
+
+import sqlite3
+conn = sqlite3.connect('clientes.db')
+cursor = conn.cursor()
+
+lista = [(
+'Fabio', 23, '44444444444', 'fabio@email.com', '1234-5678', 'Belo Horizonte', 'MG', '2014-06-09'),
+('Joao', 21, '55555555555', 'joao@email.com',
+'11-1234-5600', 'Sao Paulo', 'SP', '2014-06-09'),
+('Xavier', 24, '66666666666', 'xavier@email.com', '12-1234-5601', 'Campinas', 'SP', '2014-06-10')]
+
+cursor.executemany("""
+INSERT INTO clientes (nome, idade, cpf, email, fone, cidade, uf, criado_em)
+VALUES (?,?,?,?,?,?,?,?)
+""", lista)
+conn.commit()
+print('Dados inseridos com sucesso.')
+conn.close()
+
+----------------------------------------------------------------------------------------------------------------------
+
+# 5 Inserindo um registro com parametros de entrada definido pelo usuario
+
+import sqlite3
+
+conn = sqlite3.connect('clientes.db')
+cursor = conn.cursor()
+
+p_nome = input('Nome: ')
+p_idade = input('Idade: ')
+p_cpf = input('CPF: ')
+p_email = input('Email: ')
+p_fone = input('Fone: ')
+p_cidade = input('Cidade: ')
+p_uf = input('UF: ')
+p_criado_em = input('Criado em (yyyy-mm-dd): ')
+
+cursor.excute("""
+INSERT INTO clientes (nome, idade, cpf, email, fone, cidade, uf, criado_em)
+VALUES(?,?,?,?,?,?,?,?)
+""", (p_nome, p_idade, p_cpf, p_email, p_fone, p_cidade, p_uf, p_criado_em))
+
+conn.commit()
+
+print('Dados inseridos com sucesso.')
+
+conn.close()
+
+------------------------------------------------------------------------------------------------------------------------------
+
+# 6 - Lendo os dados 
+
+import sqlite3
+conn = sqlite3.connect('clientes.db')
+cursor = conn.cursor()
+
+
+cursor.execute("""
+SELECT * FROM clientes;
+""")
+for linha in cursor.fetchall():
+	print(linha)
+
+conn.close()
+
+------------------------------------------------------------------------------------------------------------------------------
+
+# 7 - Update - Alterando os dados
+
+import sqlite3
+conn = sqlite3.connect('clientes.db')
+cursor = conn.cursor()
+
+id_cliente = 1 
+novo_fone = '11-1000-2014'
+novo_criado_em = '2014-06-11'
+
+cursor.execute("""
+UPDATE clientes
+SET fone = ?, criado_em = ?
+WHERE id = ?
+""", (novo_fone, novo_criado_em, id_cliente))
+
+conn.commit()
+
+print('Dados atualizados com sucesso.')
+
+conn.close()
+
+------------------------------------------------------------------------------------------------------------------------------
+
+# 8 - Delete - Deletando (apagando) os dados
+
+import sqlite3
+conn = sqlite3.connect('clientes.db')
+cursor = conn.cursor()
+
+id_cliente = 8
+
+cursor.execute("""
+DELETE FROM clientes
+WHERE id = ?
+""", (id_clientes,))
+
+conn.conmit()
+
+print ('Registro excluido com sucesso.')
+
+conn.close()
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+# 9- Adicionando uma nova coluna
+
+import sqlite3
+conn = sqlite3.connect('clientes.db')
+cursor = conn.cursor()
+
+cursor.execute("""
+ALTER TABLE clientes
+ADD COLUMN bloqueado BOOLEAN;
+""")
+
+conn.commit()
+
+print('Novo campo adicionado com sucesso.')
+conn.close()
+
+----------------------------------------------------------------------------------------------------------------------------------
+# 10 - Lendo as informaçoes do banco de dados 
+
+import sqlite3
+
+conn = sqlite3.connect('clientes.db')
+cursor = conn.cursor()
+nome_tabela = 'clientes'
+
+cursor.execute('PRAGMA table_info({})'.format(nome_tabela))
+
+for coluna in colunas:
+	print (coluna)
+
+cursor.execute("""
+SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name
+""")
+
+print ('Tabelas:')
+for tabela in cursor.fetchall():
+	print ("%s" % (tabela))
+
+cursor.execute("""
+SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?
+""", (nome_tabela,))
+
+print ('Schema:')
+for schema in cursor.fetchall():
+	print ("%s" % (schema))
+
+conn.close()
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+# 11 - Fazendo backup do banco de dados (exportando dados)
+
+import sqlite3
+import io
+
+conn = sqlite3.connect('clientes.db')
+
+with io.open('clientes_dump.sql', 'w') as f:
+	for linha in conn.iterdump():
+		f.write('%s\n' % linha)
+
+print('Backup realizado com sucesso.')
+print('Salvo como clientes_dump.sql')
+conn.close()
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+# 12 - Recuperando o banco de dados (importando dados)
+
+import sqlite3
+import io
+
+conn = sqlite3.connect('clientes_recuperado.db')
+
+cursor = conn.cursor()
+
+f = io.open('clientes_dump.sql', 'r')
+sql = f.read()
+cursor.executescript(sql)
+
+print ('Banco de dados recuperado com sucesso.')
+print ('Salvo como clientes_recuperado.db')
+
+conn.close()
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+#Próximo Passo 
+
+# 12 - Criando valores randômicos
+
+import random
+import rstr
+import datetime
+
+def gen_age() :
+	return random.randint(15, 99)
+
+def gen_cpf():
+	return rstr.rstr('1234567890',11)
+
+def gen_phone():
+	return '({0} {1}-{2}'.format(
+		rstr.rstr('1234567890', 2),
+		rstr.rstr('1234567890', 4),
+		rstr.rstr('1234567890', 4))
+
+def gen_timestamp():
+	year = random.randint(1980, 2015)
+	month = random.randint(1, 12)
+	day = random.randint(1, 28)
+	hour = random.randint(1, 23)
+	minute = random.randint(1, 59)
+	second = random.randint(1, 59)
+	microsecond = random.randint(1, 999999)
+	date = datetime.datetime(year, month, day, hour,minute, second,microsecond).isoformat(" ")
+
+	return date
+
+def gen_city():
+	list_city = [
+		[u'São Paulo', 'SP'],
+		[u'Rio de Janeiro', 'RJ'],
+		[u'Porto Alegre', 'RS'],
+		[u'Campo Grande', 'MS']]
+	return random.choice(list_city)
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+# 13 - Conectando e desconectando do banco
+
+import sqlite3
+class Connect(object):
+
+	def __init__(self, db_name):
+		try:
+
+			self.conn = sqlite3.connect(db_name)
+			self.cursor = self.conn.cursor()
+
+			print("Banco:", db_name)
+
+			self.cursor.execute('SELECT SQLITE_VERSION()')
+			self.data = self.cursor.fetchone()
+
+			print("SQLite version: %s" % self.data)
+
+		except sqlite3.Error:
+			print("Erro ao abrir banco.")
+			return False
+
+	def close_db(self):
+		if self.conn:
+			self.conn.close()
+			print ("Conexão fechada.")
+
+class ClientesDb(object):
+
+	def __init__(self):
+		self.db = Connect('clientes.db')
+
+	def close_connection(self):
+		self.db.close_db()
+
+if __name__ == ' __main__':
+	cliente = clientesDb()
+	cliente.close_connection()
